@@ -19,12 +19,17 @@ function FollowTribe() {
 
   const handleChangeTwo = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckedTwo(event.target.checked)
-  };
+  }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked)
-  };
+    handleCalcSteem()
+  }
 
+  function handleCalcSteem(something?: any): number {
+    setAmount(1001)
+     return 5
+  }
 
   return (
     <>
