@@ -1,7 +1,7 @@
 import React from 'react'
-import { Typography, TextField, Button } from '@material-ui/core'
+import { Typography, TextField, Button, Grid } from '@material-ui/core'
 
-function SearchTribe() {
+const SearchTribe: React.FC = () => {
   return (
     <>
       <Typography style={{ marginBottom: 16 }} variant="h2" component="h1" align="center">
@@ -19,16 +19,16 @@ function SearchTribe() {
           fullWidth
           label="Enter Tribe"
         />
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          marginTop: 16
-        }}>
-          <div></div>
+        <Grid container
+          justify="flex-end"
+          style={{
+            marginTop: 16
+          }}
+        >
           <Button variant="contained" color="primary">
             Search
         </Button>
-        </div>
+        </Grid>
       </form>
     </>
   )

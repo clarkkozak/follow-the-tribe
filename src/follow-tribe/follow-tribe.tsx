@@ -4,76 +4,28 @@ import {
   Typography,
   Grid,
   Button,
-  List,
-  ListItem,
-  ListItemText,
-  Checkbox,
+  List
 } from '@material-ui/core'
+import Member from './member';
 
+const memebers: string[] = ['memeber1', 'member2', 'member3']
 
-function FollowTribe() {
+const FollowTribe: React.FC = () => {
 
-  const [checked, setChecked] = React.useState(true);
-  const [checkedTwo, setCheckedTwo] = React.useState(true);
-  const [amount, setAmount] = React.useState(1000)
-
-  const handleChangeTwo = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCheckedTwo(event.target.checked)
-  }
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(event.target.checked)
-    handleCalcSteem()
-  }
-
-  function handleCalcSteem(something?: any): number {
-    setAmount(1001)
-     return 5
-  }
+  const [amount] = React.useState(1000)
 
   return (
     <>
       <Typography variant="h3" component="h2" align="center" style={{ marginTop: 16 }}>
-        Memebers:
+        Members:
         </Typography>
       <form>
         <List style={{ overflow: 'auto', height: 200 }} aria-label="list of memebers">
-          <ListItem button>
-            <ListItemText primary="@username1" />
-            <Checkbox
-              checked={checked}
-              onChange={handleChange}
-              value="primary"
-              inputProps={{ 'aria-label': 'primary checkbox' }}
-            />
-          </ListItem>
-          <ListItem button>
-            <ListItemText primary="@username2" />
-            <Checkbox
-              checked={checkedTwo}
-              onChange={handleChangeTwo}
-              value="something_eles"
-              inputProps={{ 'aria-label': 'primary checkbox' }}
-            />
-          </ListItem>
-          <ListItem button>
-            <ListItemText primary="@username1" />
-            <Checkbox
-              checked={checked}
-              onChange={handleChange}
-              value="primary"
-              inputProps={{ 'aria-label': 'primary checkbox' }}
-            />
-          </ListItem>
-          <ListItem button>
-            <ListItemText primary="@username2" />
-            <Checkbox
-              checked={checkedTwo}
-              onChange={handleChangeTwo}
-              value="something_eles"
-              inputProps={{ 'aria-label': 'primary checkbox' }}
-            />
-          </ListItem>
+          { 
+            memebers.map(member => {
+              return <Member member={member} />
+            })
+          }
         </List>
         <Grid
           container
@@ -98,4 +50,5 @@ function FollowTribe() {
     </>
   )
 }
+
 export default FollowTribe
