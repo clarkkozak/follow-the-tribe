@@ -5,8 +5,7 @@ import SearchTribe from '../search-tribe/search-tribe'
 import FollowTribe from '../follow-tribe/follow-tribe'
 import Footer from '../footer/footer'
 
-function App() {
-
+const App: React.FC = () => {
   return (
     <>
       <Container maxWidth="sm" fixed>

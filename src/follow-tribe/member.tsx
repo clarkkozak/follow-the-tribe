@@ -7,15 +7,17 @@ import {
 
 interface MemberProps {
   member: string,
+  selected: boolean,
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => {}
 }
 
-const Member: React.FC<MemberProps> = ({ member }) => {
+const Member: React.FC<MemberProps> = ({ member, selected, onChange }) => {
   return (
     <ListItem button>
       <ListItemText primary={member} />
       <Checkbox
-        checked={true}
-        // onChange={handleChange}
+        checked={selected}
+        onChange={onChange}
         value={member}
         inputProps={{ 'aria-label': `${member} is listed in this steem group` }}
       />

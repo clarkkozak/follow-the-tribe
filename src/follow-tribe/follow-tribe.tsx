@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import {
   Typography,
@@ -7,15 +7,44 @@ import {
   List
 } from '@material-ui/core'
 
-import Member from './member';
+import Member from './member'
 
 const FollowTribe: React.FC = () => {
-  const [members] = React.useState(['memeber1', 'member2', 'member3'])
-  const [amount] = React.useState(1000)
+  const [members, setMembers] = useState([''])
+  const [selectedMembers, setSelectedMembers] = useState(new Set(members))
+  const [amount] = useState(1000)
+
+  const handleGetMember: any = async () => {
+    const results = await fetch('https://api.steemit.com', {
+      method: 'POST',
+      body: '{"jsonrpc":"2.0", "method":"follow_api.get_following", "params":{"account":"tribesteemup","start":null,"limit":100}, "id":1}' 
+    }).then(data => data.json())
+    const listOfMembers = results.result.reduce((arr, current) => {
+      return [...arr, current.following]
+    }, [])
+    setMembers(listOfMembers)
+    setSelectedMembers(new Set(listOfMembers))
+  }
+
+  React.useEffect( () => {
+    handleGetMember()
+  }, [])
 
   const handleSubmit: any = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault()
-    console.log(event)
+    console.log(selectedMembers)
+  }
+
+  const handleChange: any = (member: string, value: boolean) => {
+    const newSelectedMembers: any = new Set(selectedMembers)
+
+    if (value) {
+      newSelectedMembers.add(member)
+    } else {
+      newSelectedMembers.delete(member)
+    }
+
+    setSelectedMembers(newSelectedMembers)
   }
 
   return (
@@ -24,11 +53,16 @@ const FollowTribe: React.FC = () => {
         Members:
         </Typography>
       <form onSubmit={handleSubmit}>
-        <List style={{ overflow: 'auto', height: 200 }} aria-label="list of memebers">
+        <List style={{ overflow: 'auto', height: 200 }} aria-label="list of members">
           { 
-            members.map(member => {
-              return <Member key={member} member={member} />
-            })
+            members.map((member: string) => (
+              <Member 
+                key={member}
+                member={member}
+                selected={selectedMembers.has(member)}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange(member, event.target.checked)}
+              />
+            ))
           }
         </List>
         <Grid
