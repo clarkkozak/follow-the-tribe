@@ -14,10 +14,10 @@ const Member: React.FC<MemberProps> = ({ member }) => {
     <ListItem button>
       <ListItemText primary={member} />
       <Checkbox
-        // checked={checked}
+        checked={true}
         // onChange={handleChange}
-        value="something_eles"
-        inputProps={{ 'aria-label': 'primary checkbox' }}
+        value={member}
+        inputProps={{ 'aria-label': `${member} is listed in this steem group` }}
       />
     </ListItem>
   )

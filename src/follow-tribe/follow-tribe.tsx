@@ -6,24 +6,28 @@ import {
   Button,
   List
 } from '@material-ui/core'
+
 import Member from './member';
 
-const memebers: string[] = ['memeber1', 'member2', 'member3']
-
 const FollowTribe: React.FC = () => {
-
+  const [members] = React.useState(['memeber1', 'member2', 'member3'])
   const [amount] = React.useState(1000)
+
+  const handleSubmit: any = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault()
+    console.log(event)
+  }
 
   return (
     <>
       <Typography variant="h3" component="h2" align="center" style={{ marginTop: 16 }}>
         Members:
         </Typography>
-      <form>
+      <form onSubmit={handleSubmit}>
         <List style={{ overflow: 'auto', height: 200 }} aria-label="list of memebers">
           { 
-            memebers.map(member => {
-              return <Member member={member} />
+            members.map(member => {
+              return <Member key={member} member={member} />
             })
           }
         </List>
@@ -41,7 +45,7 @@ const FollowTribe: React.FC = () => {
             </Typography>
           </Grid>
           <Grid item>
-            <Button variant="contained" color="secondary">
+            <Button type="submit" variant="contained" color="secondary">
               Follow
             </Button>
           </Grid>
