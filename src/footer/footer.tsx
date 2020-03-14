@@ -5,7 +5,7 @@ function Footer() {
   return (
     <footer>
       <Typography align="center" style={{ marginTop: 24 }} variant="body2">
-        Learn more aobut the project here!
+        This app is a working progress!
       </Typography>
     </footer>
   )

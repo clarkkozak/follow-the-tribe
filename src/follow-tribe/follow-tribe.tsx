@@ -8,9 +8,11 @@ import {
   CircularProgress
 } from '@material-ui/core'
 
+
 import Member from './member'
 
 const FollowTribe: React.FC = () => {
+  const [error, setError] = useState(false)
   const [loading, setLoading] = useState(true)
   const [members, setMembers] = useState([''])
   const [selectedMembers, setSelectedMembers] = useState(new Set(members))
@@ -23,17 +25,21 @@ const FollowTribe: React.FC = () => {
     })
       .then(data => data.json())
       .catch(err => {
+        setError(true)
         console.log('There was an error when fetching: ' + err)
       })
+      
+    setLoading(false)
+    
+    if (results) {  
+      const listOfMembers = results.result.reduce((arr, current) => {
+        return [...arr, current.following]
+      }, [])
 
-    const listOfMembers = results.result.reduce((arr, current) => {
-      return [...arr, current.following]
-    }, [])
-
-    if (listOfMembers) {
       setMembers(listOfMembers)
       setSelectedMembers(new Set(listOfMembers))
-      setLoading(false)
+    } else {
+      setError(true)
     }
   }
 
@@ -64,11 +70,16 @@ const FollowTribe: React.FC = () => {
         Members:
         </Typography>
       <form onSubmit={handleSubmit}>
-        {loading && loading
-          ?
+        { error && <Typography variant="h5" align="center" style={{ marginTop: 16, marginBottom: 16 }}>Unable to Reach Steem API</Typography>}
+        { loading &&
           <Grid container justify="center" style={{ marginTop: 16 }}>
             <CircularProgress color="secondary" />
           </Grid>
+        }
+        {
+          !error && loading 
+          ?
+          <div></div>
           :
           <List style={{ overflow: 'auto', height: 200 }} aria-label="list of members">
             {
