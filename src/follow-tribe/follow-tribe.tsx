@@ -7,7 +7,8 @@ import {
   Grid,
   Button,
   List,
-  CircularProgress
+  CircularProgress,
+  Card
 } from '@material-ui/core'
 
 
@@ -15,6 +16,8 @@ import Member from './member'
 
 let opts = { ...NetConfig.net }
 
+const DELAY = 2000
+let timeout = 0 
 const postingKey = process.env.REACT_APP_POSTING_KEY || ''
 const username = process.env.REACT_APP_STEEM_USER
 
@@ -33,7 +36,7 @@ const FollowTribe: React.FC = () => {
 
     const results = await fetch('https://api.steemit.com', {
       method: 'POST',
-      body: `{"jsonrpc":"2.0", "method":"follow_api.get_following", "params":{"account":"${username}","start":null,"limit":100}, "id":1}`
+      body: `{"jsonrpc":"2.0", "method":"follow_api.get_following", "params":{"account":"${username}","start":null,"limit":205}, "id":1}`
     })
       .then(data => data.json())
       .catch(err => {
@@ -50,59 +53,52 @@ const FollowTribe: React.FC = () => {
     } else {
       setError(true)
     }
-    console.log(results)
+    // console.log(results)
   }
 
   const handleFollow: any = async (event: React.FormEvent<HTMLInputElement>) => {
-  event.preventDefault()
-  console.log('clicked follow')
-  let follower = username
-  const followMemberPromises: any = members.map(async (following) => {
-    let status = await client.call('follow_api', 'get_following', [
-      follower,
-      following,
-      'blog',
-    1,
-  ]);
-  
-    console.log({ status });
-    
-    let type
-    if (status.length > 0 && status[0].following === following) {
-      type = ''
-    } else {
-      type = 'blog'
-    }
+    event.preventDefault()
+    console.log('clicked follow')
+    let follower = username
+    const followMemberFunctions: any = []
+    members.forEach(async (following) => {
+      const json = JSON.stringify([
+        'follow',
+        {
+          follower,
+          following,
+          what: ['blog'], //null value for unfollow, 'blog' for follow
+        },
+      ])
 
-    const json = JSON.stringify([
-      'follow',
-      {
-        follower,
-        following,
-        what: [type], //null value for unfollow, 'blog' for follow
-      },
-    ])
-    
-    const data: any = {
-      id: 'follow',
-      json: json,
-      required_auths: [],
-      required_posting_auths: [follower],
-    }
+      const data: any = {
+        id: 'follow',
+        json: json,
+        required_auths: [],
+        required_posting_auths: [follower],
+      }
 
-    return new Promise (async (resolve, reject) => {
-      await client.broadcast.json(data, privateKey)
-      .then(res => {
-        resolve(console.log('user follow result: ', res))
-      })
-      .catch(err => {
-        reject(console.log(err))
-      })
+      followMemberFunctions.push(() => client.broadcast.json(data, privateKey))
     })
-  }
-  )
-  
-  console.log(followMemberPromises) 
+    followMemberFunctions.push(setLoading)
+    followMemberFunctions.forEach((fn, i) => {  
+      console.log({ fn })
+      if (i === 0) {
+        fn(true)
+        return
+      }
+      else if (i === followMemberFunctions.length -1) {
+        fn(false)
+        return
+      } else {
+        timeout = timeout + DELAY
+        setTimeout(fn()
+          .then(res => console.log(res))
+          .catch(err => console.log(err))
+        , timeout)
+        return
+      }
+    })
   }
 
   const handleGetCommunity: any = async (callback: () => {}) => {
@@ -124,12 +120,13 @@ const FollowTribe: React.FC = () => {
         return [...arr, current.following]
       }, [])
 
+      // Make sure you aren't already following this member
+      // We don't want to unfollow them.
       const listOfNewFollowers: any = listOfMembers.filter(newFollower => {
-        return !currentUserFollowers.includes(newFollower)
+        return !currentUserFollowers.includes(newFollower) 
       })
 
-      console.log({listOfNewFollowers, currentUserFollowers, listOfMembers})
-
+      console.log({currentUserFollowers, listOfMembers, listOfNewFollowers})
       setMembers(listOfNewFollowers)
       setSelectedMembers(new Set(listOfNewFollowers))
     } else {
@@ -154,6 +151,24 @@ const FollowTribe: React.FC = () => {
     handleGetCommunity(getUserFollowing)
   }, [])
 
+    if (loading) {
+      return (
+        <Grid container justify="center" style={{ marginTop: 16 }}>
+         <CircularProgress color="secondary" />
+        </Grid>
+      )
+    }
+
+  if (members.length === 0) {
+    return (
+      <Grid container justify="center" style={{ marginTop: 16 }}>
+      <Card>
+          <Typography align="center" style={{ padding: 16 }}>Congratulations! You are following all the members in this community!</Typography>
+      </Card>
+    </Grid>
+  )
+  }
+
   return (
     <>
       <Typography variant="h3" component="h2" align="center" style={{ marginTop: 16 }}>
@@ -161,11 +176,6 @@ const FollowTribe: React.FC = () => {
         </Typography>
       <form onSubmit={handleFollow}>
         {error && <Typography variant="h5" align="center" style={{ marginTop: 16, marginBottom: 16 }}>Unable to Reach Steem API</Typography>}
-        {loading &&
-          <Grid container justify="center" style={{ marginTop: 16 }}>
-            <CircularProgress color="secondary" />
-          </Grid>
-        }
         {
           !error && loading
             ?
