@@ -20,6 +20,7 @@ const SearchTribe: React.FC = () => {
           autoComplete="abundance.tribe"
           fullWidth
           label="Enter Tribe"
+          disabled
         />
         <Grid container
           justify="flex-end"
@@ -27,7 +28,7 @@ const SearchTribe: React.FC = () => {
             marginTop: 16
           }}
         >
-          <Button variant="contained" color="primary">
+          <Button disabled variant="contained" color="primary">
             Search
         </Button>
         </Grid>

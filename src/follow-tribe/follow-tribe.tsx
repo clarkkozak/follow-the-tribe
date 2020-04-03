@@ -16,8 +16,8 @@ import Member from './member'
 
 let opts = { ...NetConfig.net }
 
-const DELAY = 2000
-let timeout = 0 
+const DELAY = 700
+let timeout = 0
 const postingKey = process.env.REACT_APP_POSTING_KEY || ''
 const username = process.env.REACT_APP_STEEM_USER
 
@@ -56,9 +56,9 @@ const FollowTribe: React.FC = () => {
     // console.log(results)
   }
 
-  const handleFollow: any = async (event: React.FormEvent<HTMLInputElement>) => {
+  const handleFollow: any = async (event: React.FormEvent<HTMLInputElement>, handleLoading: any) => {
     event.preventDefault()
-    console.log('clicked follow')
+    setLoading(true)
     let follower = username
     const followMemberFunctions: any = []
     members.forEach(async (following) => {
@@ -78,30 +78,23 @@ const FollowTribe: React.FC = () => {
         required_posting_auths: [follower],
       }
 
-      followMemberFunctions.push(() => client.broadcast.json(data, privateKey))
-    })
-    followMemberFunctions.push(setLoading)
-    followMemberFunctions.forEach((fn, i) => {  
-      console.log({ fn })
-      if (i === 0) {
-        fn(true)
-        return
-      }
-      else if (i === followMemberFunctions.length -1) {
-        fn(false)
-        return
-      } else {
+      followMemberFunctions.push(() => {
         timeout = timeout + DELAY
-        setTimeout(fn()
-          .then(res => console.log(res))
-          .catch(err => console.log(err))
-        , timeout)
-        return
-      }
+        const fn = () => {
+          return client.broadcast.json(data, privateKey).then(res => console.log(res)).catch(err => console.log(err))
+        }
+        setTimeout(fn, timeout)
+      })
     })
+    followMemberFunctions.push(() => setTimeout(handleLoading, timeout))
+    followMemberFunctions.forEach((fn) => {
+      fn()
+      return
+    })
+
   }
 
-  const handleGetCommunity: any = async (callback: () => {}) => {
+  const handleGetCommunity: any = async (getUserFollowingCallback: () => {}) => {
     const results = await fetch('https://api.steemit.com', {
       method: 'POST',
       body: '{"jsonrpc":"2.0", "method":"follow_api.get_following", "params":{"account":"tribesteemup","start":null,"limit":100}, "id":1}'
@@ -115,7 +108,9 @@ const FollowTribe: React.FC = () => {
     setLoading(false)
 
     if (results) {
-      const currentUserFollowers: any = await callback()
+      // Use a call back to get the users followers
+      const currentUserFollowers: any = await getUserFollowingCallback()
+
       let listOfMembers: any = results.result.reduce((arr, current) => {
         return [...arr, current.following]
       }, [])
@@ -123,10 +118,12 @@ const FollowTribe: React.FC = () => {
       // Make sure you aren't already following this member
       // We don't want to unfollow them.
       const listOfNewFollowers: any = listOfMembers.filter(newFollower => {
-        return !currentUserFollowers.includes(newFollower) 
+        // can't follow yourself
+        if (newFollower === username) return false
+
+        return !currentUserFollowers.includes(newFollower)
       })
 
-      console.log({currentUserFollowers, listOfMembers, listOfNewFollowers})
       setMembers(listOfNewFollowers)
       setSelectedMembers(new Set(listOfNewFollowers))
     } else {
@@ -146,27 +143,31 @@ const FollowTribe: React.FC = () => {
     setSelectedMembers(newSelectedMembers)
   }
 
-
   React.useEffect(() => {
     handleGetCommunity(getUserFollowing)
   }, [])
 
-    if (loading) {
-      return (
-        <Grid container justify="center" style={{ marginTop: 16 }}>
-         <CircularProgress color="secondary" />
-        </Grid>
-      )
-    }
+  if (loading) {
+    return (
+      <Grid container justify="center" style={{ marginTop: 16 }}>
+        <CircularProgress color="secondary" />
+      </Grid>
+    )
+  }
 
   if (members.length === 0) {
     return (
       <Grid container justify="center" style={{ marginTop: 16 }}>
-      <Card>
-          <Typography align="center" style={{ padding: 16 }}>Congratulations! You are following all the members in this community!</Typography>
-      </Card>
-    </Grid>
-  )
+        <Card>
+          <Typography align="center" style={{ padding: 16 }}>Congratulations! You are following all the members in abundance.tribe!</Typography>
+        </Card>
+      </Grid>
+    )
+  }
+
+  const handleLoading: any = () => {
+    handleGetCommunity(getUserFollowing)
+    setLoading(false)
   }
 
   return (
@@ -174,7 +175,7 @@ const FollowTribe: React.FC = () => {
       <Typography variant="h3" component="h2" align="center" style={{ marginTop: 16 }}>
         Members:
         </Typography>
-      <form onSubmit={handleFollow}>
+      <form onSubmit={(event) => handleFollow(event, handleLoading)}>
         {error && <Typography variant="h5" align="center" style={{ marginTop: 16, marginBottom: 16 }}>Unable to Reach Steem API</Typography>}
         {
           !error && loading
@@ -202,12 +203,12 @@ const FollowTribe: React.FC = () => {
           style={{
             marginTop: 16
           }}>
-          <Grid item>
+          <Grid item style={{ marginTop: 8, marginBottom: 8 }}>
             <Typography>
-              Steem Needed: {amount}
+              Steem Needed: {amount} (not yet available)
             </Typography>
           </Grid>
-          <Grid item>
+          <Grid item style={{ marginTop: 8, marginBottom: 8 }}>
             <Button type="submit" variant="contained" color="secondary">
               Follow
             </Button>
