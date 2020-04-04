@@ -1,23 +1,26 @@
 import React from 'react'
 import { Typography, TextField, Button, Grid } from '@material-ui/core'
+const username = process.env.REACT_APP_STEEM_USER
+
 
 const SearchTribe: React.FC = () => {
   return (
     <>
       <Typography style={{ marginBottom: 16 }} variant="h2" component="h1" align="center">
-        Follow The Tribe
+        Hello {username}!
       </Typography>
       <form>
         <TextField
           required
-          defaultValue="tribesteemup"
+          defaultValue="abundance.tribe"
           type="search"
           variant="filled"
           id="tribe-search"
-          placeholder="tribesteemup"
-          autoComplete="tribesteemup"
+          placeholder="abundance.tribe"
+          autoComplete="abundance.tribe"
           fullWidth
           label="Enter Tribe"
+          disabled
         />
         <Grid container
           justify="flex-end"
@@ -25,7 +28,7 @@ const SearchTribe: React.FC = () => {
             marginTop: 16
           }}
         >
-          <Button variant="contained" color="primary">
+          <Button disabled variant="contained" color="primary">
             Search
         </Button>
         </Grid>
