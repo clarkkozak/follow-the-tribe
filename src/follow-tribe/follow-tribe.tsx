@@ -88,7 +88,7 @@ const FollowTribe: React.FC<FollowTribeProps> = ({ privateKey, username }) => {
         setTimeout(fn, timeout)
       })
     })
-    followMemberFunctions.push(() => setTimeout(handleLoading, timeout))
+    followMemberFunctions.push(() => setTimeout(handleLoading, timeout + 5000))
     followMemberFunctions.forEach((fn) => {
       fn()
       console.log("function fired", fn)
