@@ -33,7 +33,7 @@ const FollowTribe: React.FC<FollowTribeProps> = ({ privateKey, username }) => {
 
 
   const getUserFollowing: any = async () => {
-    console.log('get user following fire')
+    
 
     const results = await fetch('https://api.steemit.com', {
       method: 'POST',
@@ -42,7 +42,7 @@ const FollowTribe: React.FC<FollowTribeProps> = ({ privateKey, username }) => {
       .then(data => data.json())
       .catch(err => {
         setError(true)
-        console.log('There was an error when fetching user followers: ' + err)
+        
       })
 
     if (results && username) {
@@ -54,7 +54,7 @@ const FollowTribe: React.FC<FollowTribeProps> = ({ privateKey, username }) => {
     } else {
       setError(true)
     }
-    // console.log(results)
+    // 
   }
 
   const handleFollow: any = async (event: React.FormEvent<HTMLInputElement>, handleLoading: any) => {
@@ -81,9 +81,9 @@ const FollowTribe: React.FC<FollowTribeProps> = ({ privateKey, username }) => {
 
       followMemberFunctions.push(() => {
         timeout = timeout + DELAY
-        console.log({ timeout })
+        
         const fn = () => {
-          return client.broadcast.json(data, privateKey).then(res => console.log(res)).catch(err => console.log(err))
+          return client.broadcast.json(data, privateKey).then(res => 
         }
         setTimeout(fn, timeout)
       })
@@ -91,14 +91,14 @@ const FollowTribe: React.FC<FollowTribeProps> = ({ privateKey, username }) => {
     followMemberFunctions.push(() => setTimeout(handleLoading, timeout + 5000))
     followMemberFunctions.forEach((fn) => {
       fn()
-      console.log("function fired", fn)
+      
       return
     })
 
   }
 
   const handleGetCommunity: any = async (getUserFollowingCallback: () => {}) => {
-    console.log('fire handleGetCommunity')
+    
     const results = await fetch('https://api.steemit.com', {
       method: 'POST',
       body: '{"jsonrpc":"2.0", "method":"follow_api.get_following", "params":{"account":"tribesteemup","start":null,"limit":100}, "id":1}'
@@ -106,7 +106,7 @@ const FollowTribe: React.FC<FollowTribeProps> = ({ privateKey, username }) => {
       .then(data => data.json())
       .catch(err => {
         setError(true)
-        console.log('There was an error when fetching: ' + err)
+        
       })
       
     if (results) {
