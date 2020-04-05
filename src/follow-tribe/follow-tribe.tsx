@@ -83,7 +83,7 @@ const FollowTribe: React.FC<FollowTribeProps> = ({ privateKey, username }) => {
         timeout = timeout + DELAY
         
         const fn = () => {
-          return client.broadcast.json(data, privateKey).then(res => 
+          return client.broadcast.json(data, privateKey).then(() => {}).catch(() => {})
         }
         setTimeout(fn, timeout)
       })
@@ -91,7 +91,6 @@ const FollowTribe: React.FC<FollowTribeProps> = ({ privateKey, username }) => {
     followMemberFunctions.push(() => setTimeout(handleLoading, timeout + 5000))
     followMemberFunctions.forEach((fn) => {
       fn()
-      
       return
     })
 
