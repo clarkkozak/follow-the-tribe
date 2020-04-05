@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { Client, PrivateKey } from 'dsteem';
 import { Mainnet as NetConfig } from '../configuration'
+import { Client } from 'dsteem'
+
 
 import {
   Typography,
@@ -10,29 +11,30 @@ import {
   CircularProgress,
   Card
 } from '@material-ui/core'
-
-
 import Member from './member'
 
+
 let opts = { ...NetConfig.net }
-
-const DELAY = 700
-let timeout = 0
-const postingKey = process.env.REACT_APP_POSTING_KEY || ''
-const username = process.env.REACT_APP_STEEM_USER
-
 const client = new Client(NetConfig.url, opts);
-const privateKey = PrivateKey.fromString(postingKey)
 
+const DELAY = 250
+let timeout = 0
 
-const FollowTribe: React.FC = () => {
+interface FollowTribeProps {
+  privateKey: any,
+  username: string
+}
+
+const FollowTribe: React.FC<FollowTribeProps> = ({ privateKey, username }) => {
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(true)
   const [members, setMembers] = useState([''])
   const [selectedMembers, setSelectedMembers] = useState(new Set(members))
   const [amount] = useState(1000)
 
+
   const getUserFollowing: any = async () => {
+    console.log('get user following fire')
 
     const results = await fetch('https://api.steemit.com', {
       method: 'POST',
@@ -44,7 +46,7 @@ const FollowTribe: React.FC = () => {
         console.log('There was an error when fetching user followers: ' + err)
       })
 
-    if (results) {
+    if (results && username) {
       const listOfUserFollowing = results.result.reduce((arr, current) => {
         return [...arr, current.following]
       }, [])
@@ -80,6 +82,7 @@ const FollowTribe: React.FC = () => {
 
       followMemberFunctions.push(() => {
         timeout = timeout + DELAY
+        console.log({ timeout })
         const fn = () => {
           return client.broadcast.json(data, privateKey).then(res => console.log(res)).catch(err => console.log(err))
         }
@@ -89,12 +92,14 @@ const FollowTribe: React.FC = () => {
     followMemberFunctions.push(() => setTimeout(handleLoading, timeout))
     followMemberFunctions.forEach((fn) => {
       fn()
+      console.log("function fired", fn)
       return
     })
 
   }
 
   const handleGetCommunity: any = async (getUserFollowingCallback: () => {}) => {
+    console.log('fire handleGetCommunity')
     const results = await fetch('https://api.steemit.com', {
       method: 'POST',
       body: '{"jsonrpc":"2.0", "method":"follow_api.get_following", "params":{"account":"tribesteemup","start":null,"limit":100}, "id":1}'
@@ -104,9 +109,7 @@ const FollowTribe: React.FC = () => {
         setError(true)
         console.log('There was an error when fetching: ' + err)
       })
-
-    setLoading(false)
-
+      
     if (results) {
       // Use a call back to get the users followers
       const currentUserFollowers: any = await getUserFollowingCallback()
@@ -126,6 +129,7 @@ const FollowTribe: React.FC = () => {
 
       setMembers(listOfNewFollowers)
       setSelectedMembers(new Set(listOfNewFollowers))
+      setLoading(false)
     } else {
       setError(true)
     }
@@ -144,10 +148,13 @@ const FollowTribe: React.FC = () => {
   }
 
   React.useEffect(() => {
-    handleGetCommunity(getUserFollowing)
+    if (username) {
+      handleGetCommunity(getUserFollowing)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  if (loading) {
+  if (loading) { 
     return (
       <Grid container justify="center" style={{ marginTop: 16 }}>
         <CircularProgress color="secondary" />
