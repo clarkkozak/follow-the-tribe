@@ -17,9 +17,8 @@ import Member from './member'
 let opts = { ...NetConfig.net }
 const client = new Client(NetConfig.url, opts);
 
-const DELAY = 250
+const DELAY = 800
 let timeout = 0
-
 interface FollowTribeProps {
   privateKey: any,
   username: string

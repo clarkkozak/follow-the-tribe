@@ -49,7 +49,7 @@ const App: React.FC = () => {
           <Paper elevation={5} style={{ padding: 32, marginTop: 16 }}>
             <SearchTribe />
             { hasInputed &&
-              <FollowTribe privateKey username={username} />
+              <FollowTribe privateKey={privateKey} username={username} />
             }
           </Paper>
         <Footer />

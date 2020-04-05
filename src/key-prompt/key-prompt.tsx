@@ -29,7 +29,7 @@ const KeyPrompt: React.FC<KeyPromptProps> = ({ onPrompt, open }) => {
   }
 
   const handleReportToDev = () => {
-    window.location.replace('https://github.com/clarkkozak/follow_the_tribe/issues/')
+    window.location.assign('https://github.com/clarkkozak/follow_the_tribe/issues/')
   };
 
   return (
