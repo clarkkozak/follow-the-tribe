@@ -1,13 +1,15 @@
 import React from 'react'
 import { Typography, TextField, Button, Grid } from '@material-ui/core'
-const username = process.env.REACT_APP_STEEM_USER
 
+interface SearchTribeProps {
+  username: string
+}
 
-const SearchTribe: React.FC = () => {
+const SearchTribe: React.FC<SearchTribeProps> = ({ username }) => {
   return (
     <>
       <Typography style={{ marginBottom: 16 }} variant="h2" component="h1" align="center">
-        Hello {username}!
+       {username ? `Hello ${username}!` : 'Hello!'}
       </Typography>
       <form>
         <TextField

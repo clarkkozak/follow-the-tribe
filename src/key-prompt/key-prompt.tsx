@@ -41,8 +41,8 @@ const KeyPrompt: React.FC<KeyPromptProps> = ({ onPrompt, open }) => {
             Thank you for your attention! This app is to help Hive users to follow an entire community or tribe!
             Currently, you can only follow abundance.tribe! Check out the code <Link href="https://github.com/clarkkozak/follow_the_tribe">here.</Link> I'm open to suggestions!
           </DialogContentText>
-          <DialogContentText style={{ marginTop:8 }} color="secondary">
-            This app can only works with your EXACT username (case sensative) and public posting key.
+          <DialogContentText style={{ marginTop: 8 }} color="secondary">
+            This app can only works with your exact username and public posting key. 
           </DialogContentText>
           <TextField
             autoFocus

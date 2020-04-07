@@ -18,7 +18,7 @@ theme = responsiveFontSizes(theme);
 
 const App: React.FC = () => {
   const [privateKey, setPrivateKey] = React.useState({})
-  const [username, setUsername] = React.useState('user ')
+  const [username, setUsername] = React.useState('')
   const [open, setOpen] = React.useState(false);
   const [hasInputed, setHasInputed] = React.useState(false);
 
@@ -38,7 +38,7 @@ const App: React.FC = () => {
   const handleConfirmPrompt: any = (event: React.MouseEvent<HTMLButtonElement>, postingKey: string, username: string) => {
     event.preventDefault()
     const privateKey = PrivateKey.fromString(postingKey)
-    setUsername(username)
+    setUsername(username.toLowerCase())
     setPrivateKey(privateKey)
   }
 
@@ -47,7 +47,7 @@ const App: React.FC = () => {
       <Container maxWidth="sm" fixed>
           <KeyPrompt onPrompt={handleConfirmPrompt} open={open}/>
           <Paper elevation={5} style={{ padding: 32, marginTop: 16 }}>
-            <SearchTribe />
+            <SearchTribe username={username} />
             { hasInputed &&
               <FollowTribe privateKey={privateKey} username={username} />
             }

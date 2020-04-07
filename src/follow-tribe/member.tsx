@@ -19,7 +19,7 @@ const Member: React.FC<MemberProps> = ({ member, selected, onChange }) => {
         checked={selected}
         onChange={onChange}
         value={member}
-        inputProps={{ 'aria-label': `${member} is listed in this steem group` }}
+        inputProps={{ 'aria-label': `${member} is listed in this hive group` }}
       />
     </ListItem>
   )

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Mainnet as NetConfig } from '../configuration'
+import { Mainnet as NetConfig, URL } from '../configuration'
 import { Client } from 'dsteem'
 
 
@@ -9,7 +9,8 @@ import {
   Button,
   List,
   CircularProgress,
-  Card
+  Card,
+  Link
 } from '@material-ui/core'
 import Member from './member'
 
@@ -27,6 +28,7 @@ interface FollowTribeProps {
 const FollowTribe: React.FC<FollowTribeProps> = ({ privateKey, username }) => {
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [followingUsers, setFollowingUsers] = useState(false)
   const [members, setMembers] = useState([''])
   const [selectedMembers, setSelectedMembers] = useState(new Set(members))
   const [amount] = useState(1000)
@@ -35,7 +37,7 @@ const FollowTribe: React.FC<FollowTribeProps> = ({ privateKey, username }) => {
   const getUserFollowing: any = async () => {
     
 
-    const results = await fetch('https://api.steemit.com', {
+    const results = await fetch(URL, {
       method: 'POST',
       body: `{"jsonrpc":"2.0", "method":"follow_api.get_following", "params":{"account":"${username}","start":null,"limit":205}, "id":1}`
     })
@@ -60,6 +62,7 @@ const FollowTribe: React.FC<FollowTribeProps> = ({ privateKey, username }) => {
   const handleFollow: any = async (event: React.FormEvent<HTMLInputElement>, handleLoading: any) => {
     event.preventDefault()
     setLoading(true)
+    setFollowingUsers(true)
     let follower = username
     const followMemberFunctions: any = []
     members.forEach(async (following) => {
@@ -98,9 +101,9 @@ const FollowTribe: React.FC<FollowTribeProps> = ({ privateKey, username }) => {
 
   const handleGetCommunity: any = async (getUserFollowingCallback: () => {}) => {
     
-    const results = await fetch('https://api.steemit.com', {
+    const results = await fetch(URL, {
       method: 'POST',
-      body: '{"jsonrpc":"2.0", "method":"follow_api.get_following", "params":{"account":"tribesteemup","start":null,"limit":100}, "id":1}'
+      body: '{"jsonrpc":"2.0", "method":"follow_api.get_following", "params":{"account":"abundance.tribe","start":null,"limit":100}, "id":1}'
     })
       .then(data => data.json())
       .catch(err => {
@@ -154,8 +157,16 @@ const FollowTribe: React.FC<FollowTribeProps> = ({ privateKey, username }) => {
 
   if (loading) { 
     return (
-      <Grid container justify="center" style={{ marginTop: 16 }}>
-        <CircularProgress color="secondary" />
+      <Grid container justify="center" alignItems="center" direction="column" style={{ marginTop: 16 }}>
+        <Grid item style={{ margin: '8px 0'}}>
+          { followingUsers 
+            ? <Typography style={{ padding: 8 }}>Plesae wait. Check <Link href={`https://hiveblocks.com/@${username}`}>Hive Blocks</Link> to confirm the following</Typography>
+            : <Typography style={{ padding: 8 }} >Gettings users...</Typography>
+          }
+        </Grid>
+        <Grid item style={{ margin: '8px 0'}}>
+          <CircularProgress color="secondary" />
+        </Grid>
       </Grid>
     )
   }
@@ -181,7 +192,7 @@ const FollowTribe: React.FC<FollowTribeProps> = ({ privateKey, username }) => {
         Members:
         </Typography>
       <form onSubmit={(event) => handleFollow(event, handleLoading)}>
-        {error && <Typography variant="h5" align="center" style={{ marginTop: 16, marginBottom: 16 }}>Unable to Reach Steem API</Typography>}
+        {error && <Typography variant="h5" align="center" style={{ marginTop: 16, marginBottom: 16 }}>Unable to Reach Hive API</Typography>}
         {
           !error && loading
             ?
@@ -210,7 +221,7 @@ const FollowTribe: React.FC<FollowTribeProps> = ({ privateKey, username }) => {
           }}>
           <Grid item style={{ marginTop: 8, marginBottom: 8 }}>
             <Typography>
-              Steem Needed: {amount} (not yet available)
+              RC: {amount} (not yet available)
             </Typography>
           </Grid>
           <Grid item style={{ marginTop: 8, marginBottom: 8 }}>

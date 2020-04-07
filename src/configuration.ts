@@ -1,6 +1,7 @@
+export const URL = 'https://api.hive.blog'
 export const Mainnet = {
   accounts: [],
-  url: 'https://api.steemit.com',
+  url: URL,
   net: {
       addressPrefix: 'STM',
       chainId:
