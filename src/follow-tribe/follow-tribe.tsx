@@ -160,7 +160,7 @@ const FollowTribe: React.FC<FollowTribeProps> = ({ privateKey, username }) => {
       <Grid container justify="center" alignItems="center" direction="column" style={{ marginTop: 16 }}>
         <Grid item style={{ margin: '8px 0'}}>
           { followingUsers 
-            ? <Typography style={{ padding: 8 }}>Plesae wait. Check <Link href={`https://hiveblocks.com/@${username}`}>Hive Blocks</Link> to confirm the following</Typography>
+            ? <Typography style={{ padding: 8 }}>Plesae wait. Check <Link href={`https://hiveblocks.com/@${username}`} target="_blank">Hive Blocks</Link> to confirm the following</Typography>
             : <Typography style={{ padding: 8 }} >Gettings users...</Typography>
           }
         </Grid>
