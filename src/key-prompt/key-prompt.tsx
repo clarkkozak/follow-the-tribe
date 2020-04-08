@@ -58,7 +58,7 @@ const KeyPrompt: React.FC<KeyPromptProps> = ({ onPrompt, open }) => {
             margin="dense"
             id="key"
             label="Private Posting Key"
-            type="text"
+            type="password"
             fullWidth
             value={postingKey}
             onChange={handlePostingKey}
