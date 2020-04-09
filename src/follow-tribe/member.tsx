@@ -2,7 +2,8 @@ import React from 'react'
 import {
   ListItem,
   ListItemText,
-  Checkbox
+  Checkbox,
+  Link
 } from '@material-ui/core'
 
 interface MemberProps {
@@ -14,7 +15,9 @@ interface MemberProps {
 const Member: React.FC<MemberProps> = ({ member, selected, onChange }) => {
   return (
     <ListItem button>
-      <ListItemText primary={member} />
+      <ListItemText>
+       <Link href={`https://peakd.com/@${member}`} target="_blank">{member}</Link>
+      </ListItemText>
       <Checkbox
         checked={selected}
         onChange={onChange}
